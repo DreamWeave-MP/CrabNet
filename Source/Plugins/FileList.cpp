@@ -265,7 +265,7 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
         strcat(fullPath, "*");
 
 
-        intptr_t dir = _findfirst(fullPath, &fileInfo);
+        long dir = _findfirst(fullPath, &fileInfo);
         if (dir == -1)
         {
             _findclose(dir);
@@ -282,11 +282,8 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
         do
         {
             // no guarantee these entries are first...
-            if (strcmp(".", fileInfo.name) == 0 ||
-                strcmp("..", fileInfo.name) == 0)
-            {
+            if (strcmp(".", fileInfo.name) == 0 || strcmp("..", fileInfo.name) == 0)
                 continue;
-            }
 
             if ((fileInfo.attrib & (_A_HIDDEN | _A_SUBDIR | _A_SYSTEM)) == 0)
             {

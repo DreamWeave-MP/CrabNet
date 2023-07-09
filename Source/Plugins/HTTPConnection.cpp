@@ -222,75 +222,47 @@ void HTTPConnection::ProcessTCPPacket(Packet *packet)
 {
     RakAssert(packet);
 
-    // read all the packets possible
-    if(packet->systemAddress == server)
+    if (packet->systemAddress != server)
+        return;
+    
+    if (incomingData.GetLength() == 0)
     {
-        if(incomingData.GetLength() == 0)
+        int response_code = atoi((char *)packet->data + strlen("HTTP/1.0 "));
+
+        if (response_code > 299)
         {
-            int response_code = atoi((char *)packet->data + strlen("HTTP/1.0 "));
-
-            if(response_code > 299)
-            {
-                badResponses.Push(BadResponse(packet->data, response_code));
-                //printf("Closed connection (Bad response 2)\n");
-                CloseConnection();
-                return;
-            }
-        }
-
-        RakNet::RakString incomingTemp = RakNet::RakString::NonVariadic((const char*) packet->data);
-        incomingTemp.URLDecode();
-        incomingData += incomingTemp;
-
-    //    printf((const char*) packet->data);
-    //    printf("\n");
-
-        RakAssert(strlen((char *)packet->data) == packet->length); // otherwise it contains Null bytes
-
-        const char *start_of_body = strstr(incomingData, "\r\n\r\n");
-
-        // besides having the server close the connection, they may
-        // provide a length header and supply that many bytes
-        if(
-            // Why was start_of_body here? Makes the GET command fail
-            // start_of_body &&
-            connectionState == CS_PROCESSING)
-        {
-            /*
-            // The stupid programmer that wrote this originally didn't think that just because the header contains this value doesn't mean you got the whole message
-            if (strstr((const char*) packet->data, "\r\nConnection: close\r\n"))
-            {
-                CloseConnection();
-            }
-            else
-            {
-            */
-                long length_of_headers;
-                if (start_of_body)
-                {
-                    length_of_headers = (long)(start_of_body + 4 - incomingData.C_String());
-                    const char *length_header = strstr(incomingData, "\r\nLength: ");
-
-                    if(length_header)
-                    {
-                        long length = atol(length_header + 10) + length_of_headers;
-
-                        if((long) incomingData.GetLength() >= length)
-                        {
-                            //printf("Closed connection (Got all data due to length header)\n");
-                            CloseConnection();
-                        }
-                    }
-                }
-                else
-                {
-                    // No processing needed
-                }
-
-
-            //}
+            badResponses.Push(BadResponse(packet->data, response_code));
+            CloseConnection();
+            return;
         }
     }
+
+    RakNet::RakString incomingTemp = RakNet::RakString::NonVariadic((const char *)packet->data);
+    incomingTemp.URLDecode();
+    incomingData += incomingTemp;
+
+    RakAssert(strlen((char *)packet->data) == packet->length);
+    const char *start_of_body = strstr(incomingData, "\r\n\r\n");
+
+    if (connectionState != CS_PROCESSING)
+        return;
+
+    long length_of_headers;
+    if (!start_of_body)
+        return;
+    
+    length_of_headers = (long)(start_of_body + 4 - incomingData.C_String());
+    const char *length_header = strstr(incomingData, "\r\nLength: ");
+
+    if (!length_header)
+        return;
+
+    long length = atol(length_header + 10) + length_of_headers;
+
+    if ((long)incomingData.GetLength() < length)
+        return;
+
+    CloseConnection();
 }
 
 bool HTTPConnection::IsBusy(void) const
