@@ -7,6 +7,7 @@
 #include "_FindFirst.h"
 #include "DS_List.h"
 
+#include "FileList.h"
 #include <sys/stat.h>
 
 #include <fnmatch.h>
@@ -57,11 +58,10 @@ long _findfirst(const char *name, _finddata_t *f)
     // being '.'
     if (_findnext(ret, f) == -1)
         return -1;
-    else
-        return ret;
+    return ret;
 }
 
-int _findnext(intptr_t h, _finddata_t *f)
+int _findnext(long h, _finddata_t *f)
 {
     RakAssert(h >= 0 && h < (long) fileInfo.Size());
     if (h < 0 || h >= (long) fileInfo.Size()) return -1;

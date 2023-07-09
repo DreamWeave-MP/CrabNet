@@ -265,7 +265,7 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
         strcat(fullPath, "*");
 
 
-        intptr_t dir = _findfirst(fullPath, &fileInfo);
+        long dir = _findfirst(fullPath, &fileInfo);
         if (dir == -1)
         {
             _findclose(dir);

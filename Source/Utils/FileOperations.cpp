@@ -121,7 +121,7 @@ bool DirectoryExists(const char *directory)
     strcpy(baseDirWithStars, directory);
     AddSlash(baseDirWithStars);
     strcat(baseDirWithStars, "*.*");
-    intptr_t dir = _findfirst(baseDirWithStars, &fileInfo);
+    long dir = _findfirst(baseDirWithStars, &fileInfo);
     if (dir == -1)
         return false;
     _findclose(dir);
