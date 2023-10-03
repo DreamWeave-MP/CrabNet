@@ -31,7 +31,7 @@ ENDIF (WIN32 AND NOT UNIX)
 
 # Options
 option(CRABNET_ENABLE_SAMPLES "Generate RakNet sample projects." FALSE)
-option(CRABNET_ENABLE_DLL "Generate the DLL project." TRUE)
+option(CRABNET_ENABLE_DLL "Generate the DLL project." FALSE)
 option(CRABNET_ENABLE_STATIC "Generate the static library project." TRUE)
 
 option(CRABNET_ENABLE_PVS "Enable PVS Studio Analyzer" FALSE)
