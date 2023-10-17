@@ -20,10 +20,10 @@ jobs:
       BUILD_EXT: ${{ matrix.target_system == 'windows-2022' && '.lib' || '.a' }}
       BUILD_PREFIX: ${{ matrix.target_system == 'windows-2022' && '' || 'lib' }}
       BUILD_SUFFIX: ${{ matrix.build_type != 'Release' && matrix.build_type != 'MinSizeRel' && '' || 'd' }}
-      LIB_NAME: ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
       BUILD_DIR: D:/a/CrabNet/CrabNet/MSVC2022_64/lib/${{ matrix.build_type}}/
+      LIB_NAME: ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
 
-    steps:
+      steps:
       - uses: actions/checkout@v4
 
       - name: Configure
@@ -38,13 +38,14 @@ jobs:
         run: |
           cp ${{ runner.os == 'Windows' && ${{ env.BUILD_DIR }} || 'lib/' }}${{ env.LIB_NAME }} .
           7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ env.LIB_NAME }}
+        env:
 
       - name: Upload Release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: Stable-CI
-          files: CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ env.LIB_NAME }}
+          files: CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
           body: |
             CI Build for Dreamweave CrabNet Fork
 
@@ -54,5 +55,5 @@ jobs:
         with:
           path: |
             include/
-            ${{ env.LIB_NAME }}
+            ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
           name: CrabNet-${{ runner.os }}-${{ matrix.build_type }}
