@@ -1,0 +1,58 @@
+name: Crab-Main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  Windows:
+    strategy:
+      matrix:
+        build_type: [Release, RelWithDebInfo, MinSizeRel, Debug]
+        target_system: [ ubuntu-22.04, windows-2022 ]
+    runs-on: ${{ matrix.target_system }}
+    env:
+      BUILD_EXT: ${{ matrix.target_system == 'windows-2022' && '.lib' || '.a' }}
+      BUILD_PREFIX: ${{ matrix.target_system == 'windows-2022' && '' || 'lib' }}
+      BUILD_SUFFIX: ${{ matrix.build_type != 'Release' && matrix.build_type != 'MinSizeRel' && '' || 'd' }}
+      LIB_NAME: ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
+      BUILD_DIR: D:/a/CrabNet/CrabNet/MSVC2022_64/lib/${{ matrix.build_type}}/
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        shell: bash
+        run: cmake .
+
+      - name: Build
+        run: |
+          cmake --build . --config ${{ matrix.build_type }}
+
+      - name: Build Archive
+        run: |
+          cp ${{ runner.os == 'Windows' && ${{ env.BUILD_DIR }} || 'lib/' }}${{ env.LIB_NAME }} .
+          7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ env.LIB_NAME }}
+
+      - name: Upload Release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: Stable-CI
+          files: CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ env.LIB_NAME }}
+          body: |
+            CI Build for Dreamweave CrabNet Fork
+
+      - name: Upload Artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            include/
+            ${{ env.LIB_NAME }}
+          name: CrabNet-${{ runner.os }}-${{ matrix.build_type }}
