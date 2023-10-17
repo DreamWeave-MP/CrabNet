@@ -23,7 +23,7 @@ jobs:
       BUILD_DIR: D:/a/CrabNet/CrabNet/MSVC2022_64/lib/${{ matrix.build_type}}/
       LIB_NAME: ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
 
-      steps:
+    steps:
       - uses: actions/checkout@v4
 
       - name: Configure
