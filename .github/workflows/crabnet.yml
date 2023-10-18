@@ -56,6 +56,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: |
-            include/
-            ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
+            CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z
           name: CrabNet-${{ runner.os }}-${{ matrix.build_type }}
