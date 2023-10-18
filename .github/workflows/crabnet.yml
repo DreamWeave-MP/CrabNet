@@ -37,7 +37,7 @@ jobs:
       - name: Make Archive
         if: github.event_name != 'pull_request'
         run: |
-          7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z LICENSE include/ ${{ runner.os == 'Windows' && env.BUILD_DIR || 'lib/' }}${{ env.BUILD_PREFIX }}RakNetLibStatic${{ runner.os == 'Windows' && env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
+          7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z LICENSE include/ ${{ runner.os == 'Windows' && env.BUILD_DIR || 'lib/' }}${{ env.BUILD_PREFIX }}RakNetLibStatic${{ runner.os == 'Windows' && matrix.build_type == 'Debug' && 'd' || '' }}${{ env.BUILD_EXT }}
         # env:
           # LIB_NAME: $BUILD_PREFIXRakNetLibStatic$BUILD_SUFFIX$BUILD_EXT
 
