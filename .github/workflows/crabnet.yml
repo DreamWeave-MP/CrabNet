@@ -20,7 +20,7 @@ jobs:
       BUILD_EXT: ${{ matrix.target_system == 'windows-2022' && '.lib' || '.a' }}
       BUILD_PREFIX: ${{ matrix.target_system == 'windows-2022' && '' || 'lib' }}
       BUILD_SUFFIX: ${{ matrix.build_type != 'Release' && matrix.build_type != 'MinSizeRel' && '' || 'd' }}
-      BUILD_DIR: D:/a/CrabNet/CrabNet/MSVC2022_64/lib/${{ matrix.build_type}}/
+      BUILD_DIR: D:/a/CrabNet/CrabNet/MSVC2022_64/${{ matrix.build_type}}/lib/
 
     steps:
       - uses: actions/checkout@v4
