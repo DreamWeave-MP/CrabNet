@@ -20,7 +20,7 @@ jobs:
       BUILD_EXT: ${{ matrix.target_system == 'windows-2022' && '.lib' || '.a' }}
       BUILD_PREFIX: ${{ matrix.target_system == 'windows-2022' && '' || 'lib' }}
       BUILD_SUFFIX: ${{ matrix.build_type != 'Release' && matrix.build_type != 'MinSizeRel' && '' || 'd' }}
-      BUILD_DIR: D:/a/CrabNet/CrabNet/MSVC2022_64/${{ matrix.build_type}}/lib/
+      BUILD_DIR: D:/a/CrabNet/CrabNet/lib/${{ matrix.build_type}}/
 
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
       - name: Build Windows Archive
         if: runner.os == 'Windows'
         run: |
-          7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ runner.os == 'Windows' && env.BUILD_DIR || 'lib/'}}${{ env.LIB_NAME }}
+          7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ runner.os == 'Windows' && env.BUILD_DIR || 'lib' }}/${{ env.LIB_NAME }}
         env:
           LIB_NAME: $BUILD_PREFIXRakNetLibStatic$BUILD_SUFFIX$BUILD_EXT
 
