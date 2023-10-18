@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.target_system }}
     env:
       BUILD_EXT: ${{ matrix.target_system == 'windows-2022' && '.lib' || '.a' }}
-      BUILD_PREFIX: ${{ matrix.target_system == 'windows-2022' && '' || 'lib' }}
+      BUILD_PREFIX: ${{ matrix.target_system != 'windows-2022' && '' || 'lib' }}
       BUILD_SUFFIX: ${{ matrix.build_type != 'Release' && matrix.build_type != 'MinSizeRel' && '' || 'd' }}
       BUILD_DIR: D:/a/CrabNet/CrabNet/lib/${{ matrix.build_type}}/
       # LIB_NAME:
