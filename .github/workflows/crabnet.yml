@@ -47,7 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: Stable-CI
-          files: CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z include/ ${{ env.BUILD_PREFIX }}RakNetLibStatic${{ env.BUILD_SUFFIX }}${{ env.BUILD_EXT }}
+          files: CrabNet-${{ runner.os }}-${{ matrix.build_type }}.7z
           body: |
             CI Build for Dreamweave CrabNet Fork
 
